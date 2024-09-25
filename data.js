@@ -1,5 +1,6 @@
-const powerpointName = "Powerpoint Generated File";
-
+const powerpointName = "ATest";
+const acceptedContentFontSize = [60, 61, 62, 63, 64, 65, 66];
+const characterPerSlideLimit = 170;
 const layoutProps = {
   name: "Church",
   width: 13.3334645669,
@@ -70,7 +71,11 @@ export {
   lyricsProps,
   titleProps,
   greenTheme,
+  redTheme,
+  purpleTheme,
   logoXuDoanProps,
   namMucVuProps,
   sectionOfTitleProps,
+  acceptedContentFontSize,
+  characterPerSlideLimit,
 };
