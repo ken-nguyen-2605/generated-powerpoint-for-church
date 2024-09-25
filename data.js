@@ -54,6 +54,7 @@ const lyricsProps = {
   y: 0.3346456693,
   w: layoutProps.width - 2 * 0.4173228346,
   h: layoutProps.height - 2 * 0.3346456693,
+  color: "FFFFFF",
   fontFace: "Times New Roman",
   bold: true,
   align: "justify",

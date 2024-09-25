@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {
   powerpointName,
   layoutProps,
@@ -75,14 +76,16 @@ class EucharisticYouthSong {
   }
   create(powerpoint, color) {
     let newSlide = powerpoint.addSlide({ masterName: color });
-    newSlide.addText(this.title, titleProps);
+    let copyTitleProps = _.cloneDeep(titleProps);
+    copyTitleProps.y = "40%";
+    newSlide.addText(this.title, copyTitleProps);
     newSlide.addText(this.songPart, sectionOfTitleProps);
     newSlide.addImage(logoXuDoanProps);
     newSlide.addImage(namMucVuProps);
 
     for (let i = 0; i < this.pages.length; i++) {
       let newSlide = powerpoint.addSlide({ masterName: color });
-      let copyLyricsProps = lyricsProps;
+      let copyLyricsProps = _.cloneDeep(lyricsProps);
       copyLyricsProps.fontSize = 66;
       newSlide.addText(this.pages[i], copyLyricsProps);
     }
@@ -170,15 +173,14 @@ class Song {
   createSecondOrderLyric(powerpoint, color, text) {
     let newSlide = powerpoint.addSlide({ masterName: color });
     let fontSize = calculateFontSize(text); //////////////////////////
-    let tempProps = lyricsProps;
+    let tempProps = _.cloneDeep(lyricsProps);
     tempProps.fontSize = fontSize;
-    tempProps.color = "FFFFFF";
     newSlide.addText(text, tempProps);
   }
 }
 
 // Input of song slides
-class Lyric {
+class Verse {
   constructor(lyric) {
     this.lyricPerPage = [];
     this.distributeToPages(lyric);
@@ -221,14 +223,14 @@ class Lyric {
   }
 }
 
-let verse1 = new Lyric(
+let verse1 = new Verse(
   "1. Một tấm bánh trắng chúng con hiệp dâng, nguyện nên sức thiêng dưỡng nuôi trần gian. Một ly rượu nho thắm hương thơm ngát, sự sống muôn đời chính Cha ban tặng."
 );
-let verse2 = new Lyric(
+let verse2 = new Verse(
   "2. Rộn vang giai khúc tán dương ngợi ca, kỳ công khắp nơi chính Cha làm ra. Ngài gieo khúc hát trong lòng con mãi, nguyện suốt cuộc đời hát khen Danh Ngài."
 );
 
-let chorus = new Lyric(
+let chorus = new Verse(
   "ĐK. Đây tâm tình, lòng con thảo kính, xin tiến dâng Cha với cả tình yêu. Này bánh thơm, đây ly rượu nồng, nguyện Cha đoái thương đến trái tim hồng, rộng ban thánh ân bao la thỏa lòng, con ước mong."
 );
 let orderOfLyrics = [verse1, chorus, verse2, chorus];
