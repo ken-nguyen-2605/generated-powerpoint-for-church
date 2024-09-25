@@ -2,8 +2,6 @@ import _ from "lodash";
 import {
   powerpointName,
   layoutProps,
-  lyricsProps,
-  titleProps,
   greenTheme,
   logoXuDoanProps,
   namMucVuProps,
@@ -11,6 +9,8 @@ import {
   characterPerSlideLimit,
   redTheme,
   purpleTheme,
+  lyricsPropsWithFontSize,
+  titlePropsWithY,
 } from "./data.js";
 
 import {
@@ -63,6 +63,146 @@ class PowerpointFile {
   }
 }
 
+class KinhTruocRuocLe {
+  constructor() {
+    this.pages = [
+      new FirstPage(
+        "KINH\nDỌN MÌNH RƯỚC LỄ",
+        "Lạy Chúa Giêsu, con tin thật Chúa đang ngự trong tấm bánh bé nhỏ trên bàn thờ.",
+        {
+          title: {
+            x: "0%",
+            y: 0.165354331,
+            w: "100%",
+            h: "20%",
+            color: "FFFF00",
+            fontFace: "Times New Roman",
+            fontSize: 72,
+            bold: true,
+            align: "center",
+            valign: "top",
+          },
+          text: lyricsPropsWithFontSize({ fontSize: 66, y: "35%" }),
+        }
+      ),
+      new SecondPage(
+        "Chúa là Thiên Chúa thật và là người thật, đã trở nên lương thực nuôi sống chúng con, trên đường về quê trời."
+      ),
+      new SecondPage(
+        "Chúa muốn ở lại trong con, và con cũng  muốn ước ao rước Chúa vào lòng, để được ở lại trong Chúa."
+      ),
+      new SecondPage(
+        "Nhưng con biết, mình còn nhiều tội lỗi, chẳng đáng Chúa đến thăm. Xin Chúa tẩy sạch quả tim con, để con nên trong trắng."
+      ),
+      new SecondPage(
+        "Xin Chúa mở rộng tâm hồn con, để con đừng từ chối Chúa sự gì. Lạy Chúa Giêsu, con yêu mến Chúa,"
+      ),
+      new SecondPage(
+        "Xin Chúa mau đến với con. Lạy Mẹ Maria xin giúp con xứng đáng đón rước Chúa Giêsu.",
+        " Amen."
+      ),
+    ];
+  }
+
+  create(powerpoint, color) {
+    for (let i = 0; i < this.pages.length; i++) {
+      this.pages[i].create(powerpoint, color);
+    }
+  }
+}
+
+class KinhSauRuocLe {
+  constructor() {
+    this.pages = [
+      new FirstPage(
+        "KINH CÁM ƠN SAU KHI\nRƯỚC LỄ",
+        "Lạy Chúa Giêsu, con tin Chúa đang ngự trong lòng con. Con cung kính thờ lạy Chúa là Thiên Chúa uy nghi cao cả.",
+        {
+          title: {
+            x: "0%",
+            y: 0.165354331,
+            w: "100%",
+            h: "20%",
+            color: "FFFF00",
+            fontFace: "Times New Roman",
+            fontSize: 66,
+            bold: true,
+            align: "center",
+            valign: "top",
+          },
+          text: lyricsPropsWithFontSize({ fontSize: 66, y: "30%" }),
+        }
+      ),
+      new SecondPage(
+        "Con sung sướng vì Chúa đến thăm con, dù con không xứng đáng. Lạy Chúa Giêsu, xin ở lại với con mãi mãi, trong suốt cuộc đời con."
+      ),
+      new SecondPage(
+        "Xin làm cho con nên giống Chúa: hiền hậu và khiêm nhường, chăm chỉ và bác ái, hiếu thảo và vui tươi. Xin làm cho con nhớ rằng:"
+      ),
+      new SecondPage(
+        '"Chúa đang ngự trong con, và con có bổn phận đem Chúa đến mọi nơi, ở nhà và ở trường, trong khu xóm và ngoài đường phố"'
+      ),
+      new SecondPage(
+        "Để tất cả những người bạn của con nhận biết Chúa, và sống yêu thương nhau."
+      ),
+      new SecondPage(
+        "Lạy Chúa Giêsu, con quyết tâm sống theo lời Chúa dạy, để đáp lại tình Chúa yêu con."
+      ),
+      new SecondPage(
+        "Có Chúa, con không sợ hy sinh. Có Chúa, con đủ sức tránh xa tội lỗi và sống trung thành với Chúa suốt đời con."
+      ),
+      new SecondPage(
+        "Lạy Chúa Giêsu, con yêu mến Chúa. Lạy Chúa Giêsu, con yêu mến Chúa biết bao.",
+        " Amen."
+      ),
+    ];
+  }
+
+  create(powerpoint, color) {
+    for (let i = 0; i < this.pages.length; i++) {
+      this.pages[i].create(powerpoint, color);
+    }
+  }
+}
+
+class FirstPage {
+  constructor(title, text, firstPageProps) {
+    this.title = title;
+    this.text = text;
+    this.firstPageProps = firstPageProps;
+  }
+  create(powerpoint, color) {
+    let newSlide = powerpoint.addSlide({ masterName: color });
+    newSlide.addText(this.title, this.firstPageProps.title);
+    newSlide.addText(this.text, this.firstPageProps.text);
+  }
+}
+
+class SecondPage {
+  constructor(text, end = "") {
+    this.text = text;
+    this.end = end;
+  }
+
+  create(powerpoint, color) {
+    // If there is no end, text of end is empty -> only text will be displayed
+    let newSlide = powerpoint.addSlide({ masterName: color });
+    newSlide.addText(
+      [
+        {
+          text: this.text,
+          options: lyricsPropsWithFontSize({ fontSize: 66 }),
+        },
+        {
+          text: this.end,
+          options: lyricsPropsWithFontSize({ fontSize: 66, color: "FFFF00" }),
+        },
+      ],
+      lyricsPropsWithFontSize({ fontSize: 66 })
+    );
+  }
+}
+
 class EucharisticYouthSong {
   constructor() {
     this.pages = [
@@ -76,18 +216,17 @@ class EucharisticYouthSong {
   }
   create(powerpoint, color) {
     let newSlide = powerpoint.addSlide({ masterName: color });
-    let copyTitleProps = _.cloneDeep(titleProps);
-    copyTitleProps.y = "40%";
-    newSlide.addText(this.title, copyTitleProps);
+    newSlide.addText(this.title, titlePropsWithY("40%"));
     newSlide.addText(this.songPart, sectionOfTitleProps);
     newSlide.addImage(logoXuDoanProps);
     newSlide.addImage(namMucVuProps);
 
     for (let i = 0; i < this.pages.length; i++) {
       let newSlide = powerpoint.addSlide({ masterName: color });
-      let copyLyricsProps = _.cloneDeep(lyricsProps);
-      copyLyricsProps.fontSize = 66;
-      newSlide.addText(this.pages[i], copyLyricsProps);
+      newSlide.addText(
+        this.pages[i],
+        lyricsPropsWithFontSize({ fontSize: 66 })
+      );
     }
   }
 }
@@ -143,39 +282,32 @@ class Song {
 
   createTitle(powerpoint, color) {
     let newSlide = powerpoint.addSlide({ masterName: color });
-    newSlide.addText(this.title, titleProps);
     newSlide.addText(this.songPart, sectionOfTitleProps);
+    newSlide.addText(this.title, titlePropsWithY());
     newSlide.addImage(logoXuDoanProps);
     newSlide.addImage(namMucVuProps);
   }
 
   createFirstOrderLyric(powerpoint, color, text) {
-    // console.log(text);
-    let preLyrics = extractPreLyrics(text);
-    let lyrics = extractLyrics(text);
-
     let newSlide = powerpoint.addSlide({ masterName: color });
-    let fontSize = calculateFontSize(text); //////////////////////////
+    let fontSize = calculateFontSize(text);
     newSlide.addText(
       [
         {
-          text: preLyrics,
-          options: { color: "FFFF00", fontSize: fontSize },
+          text: extractPreLyrics(text),
+          options: { color: "FFFF00" },
         },
         {
-          text: lyrics,
-          options: { color: "FFFFFF", fontSize: fontSize },
+          text: extractLyrics(text),
         },
       ],
-      lyricsProps
+      lyricsPropsWithFontSize({ fontSize: fontSize })
     );
   }
   createSecondOrderLyric(powerpoint, color, text) {
     let newSlide = powerpoint.addSlide({ masterName: color });
-    let fontSize = calculateFontSize(text); //////////////////////////
-    let tempProps = _.cloneDeep(lyricsProps);
-    tempProps.fontSize = fontSize;
-    newSlide.addText(text, tempProps);
+    let fontSize = calculateFontSize(text);
+    newSlide.addText(text, lyricsPropsWithFontSize({ fontSize: fontSize }));
   }
 }
 
@@ -239,8 +371,10 @@ let orderOfLyrics = [verse1, chorus, verse2, chorus];
 let song1 = new Song("GIAI KHÚC DÂNG TIẾN 4", "Dâng lễ", orderOfLyrics);
 let transition1 = new Transition();
 let eucharisticYouthSong = new EucharisticYouthSong();
+let kinhTruocRuocLe = new KinhTruocRuocLe();
+let kinhSauRuocLe = new KinhSauRuocLe();
 let myPowerpoint = new PowerpointFile(
-  [transition1, song1, eucharisticYouthSong],
+  [kinhSauRuocLe, kinhTruocRuocLe, transition1, song1, eucharisticYouthSong],
   "Green"
 );
 myPowerpoint.write();
