@@ -30,4 +30,14 @@ function calculateFontSize(text) {
   return 100;
 }
 
-export { extractLyrics, extractPreLyrics, calculateFontSize };
+function calcFontDapCa(text) {
+  let textLength = text.length;
+  if (textLength <= 110) return 66;
+  if (textLength <= 115) return 64;
+  if (textLength <= 120) return 62;
+  if (textLength <= 150) return 60;
+  console.log("Error: Text too long");
+  return 100;
+}
+
+export { extractLyrics, extractPreLyrics, calculateFontSize, calcFontDapCa };
