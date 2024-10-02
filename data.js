@@ -29,23 +29,6 @@ function boxModel(x, y) {
   };
 }
 
-function boxModelLarge(x, y) {
-  return {
-    x: x,
-    y: y,
-    w: 4.28740157,
-    h: 1.66535433,
-    color: "FFFFFF",
-    fontFace: "Times New Roman",
-    fontSize: 54,
-    bold: true,
-    align: "center",
-    valign: "middle",
-    shape: new PptxGenJS().ShapeType.rect,
-    fill: { color: "9BC348" },
-    line: { color: "F3FF95", width: 4 , transparency: 40},
-  };
-}
 const moiCacEmQuyProps = {
   path: "./images/moiCacEmQuy.jpg",
   x: 6.22440945,

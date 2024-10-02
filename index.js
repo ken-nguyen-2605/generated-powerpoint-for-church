@@ -1,1117 +1,224 @@
-import _ from "lodash";
-import {
-  moiCacEmQuyProps,
-  tinMungProps,
-  powerpointName,
-  layoutProps,
-  greenTheme,
-  logoXuDoanProps,
-  namMucVuProps,
-  sectionOfTitleProps,
-  characterPerSlideLimit,
-  redTheme,
-  purpleTheme,
-  lyricsPropsWithFontSize,
-  titlePropsWithY,
-  mauNhiemDucTinProps,
-  mauNhiemDucTinLMProps,
-  mauNhiemDucTinCongDoanProps,
-  boxModel,
-} from "./data.js";
+import * as MyPPTX from "./aggregator.js";
+import fs from "fs";
+import rl from "readline";
 
-import {
-  extractPreLyrics,
-  extractLyrics,
-  calculateFontSize,
-  calcFontDapCa,
-} from "./lyrics-manip.js";
-import PptxGenJS from "pptxgenjs";
-
-class PowerpointFile {
-  // Put in specific object of section, ex: Song, Transition
-  constructor(arrSections = [], themeColor) {
-    this.arrSection = arrSections;
-    this.powerpoint = new PptxGenJS();
-    this.themeColor = themeColor;
-    this.setup();
-  }
-  setup() {
-    // Layout size setup
-    this.powerpoint.defineLayout(layoutProps);
-    this.powerpoint.layout = layoutProps.name;
-
-    // Background setup
-    this.powerpoint.defineSlideMaster({
-      title: "Green",
-      background: { path: greenTheme },
-    });
-    this.powerpoint.defineSlideMaster({
-      title: "Red",
-      background: { path: redTheme },
-    });
-    this.powerpoint.defineSlideMaster({
-      title: "Purple",
-      background: { path: purpleTheme },
-    });
-    this.powerpoint.defineSlideMaster({
-      title: "Black",
-      background: { color: "000000" },
-    });
-  }
-
-  write() {
-    for (let i = 0; i < this.arrSection.length; i++) {
-      this.arrSection[i].create(this.powerpoint, this.themeColor);
-    }
-  }
-
-  saveFile(powerpointName) {
-    this.powerpoint.writeFile({ fileName: powerpointName });
-  }
+async function main(params) {
+  const songVerses = await patchData(params.file);
+  console.log(songVerses);
+  const orderOfVerses = [0, 1, 0, 2, 0];
+  const songVersesPatched = patchVerse(songVerses, orderOfVerses);
+  console.log(songVersesPatched);
+  executePowerpoint(songVersesPatched);
 }
 
-class KinhVinhDanh {
-  constructor() {
-    this.pages = [
-      new FirstPage(
-        "KINH VINH DANH",
-        "Vinh danh Thiên Chúa trên các tầng trời. Và bình an dưới thế cho người thiện tâm. Chúng con ca ngợi Chúa.",
-        {
-          title: {
-            x: "0%",
-            y: 0.205354331,
-            w: "100%",
-            h: "20%",
-            color: "FFFF00",
-            fontFace: "Times New Roman",
-            fontSize: 66,
-            bold: true,
-            align: "center",
-            valign: "top",
-          },
-          text: lyricsPropsWithFontSize({ fontSize: 66, y: 1.54 }),
-        }
-      ),
-      new SecondPage(
-        "Chúng con chúc tụng Chúa. Chúng con thờ lạy Chúa. Chúng con tôn vinh Chúa. Chúng con cảm tạ Chúa, vì vinh quang cao cả Chúa."
-      ),
-      new SecondPage(
-        "Lạy Chúa là Thiên Chúa, là Vua trên trời, là Chúa Cha toàn năng. Lạy Con Một Thiên Chúa, Chúa Giê-su Ki-tô."
-      ),
-      new SecondPage(
-        "Lạy Chúa là Thiên Chúa, là Chiên Thiên Chúa, là Con Đức Chúa Cha. Chúa xóa tội trần gian xin thương xót chúng con."
-      ),
-      new SecondPage(
-        "Chúa xóa tội trần gian xin nhậm lời chúng con cầu khẩn. Chúa ngự bên hữu Đức Chúa Cha xin thương xót chúng con."
-      ),
-      new SecondPage(
-        "Vì lạy Chúa Giê-su Ki-tô chỉ có Chúa là Đấng Thánh, chỉ có Chúa là Chúa, chỉ có Chúa là Đấng Tối Cao."
-      ),
-      new SecondPage(
-        "Cùng Đức Chúa Thánh Thần trong vinh quang Đức Chúa Cha. A-men!"
-      ),
-    ];
-  }
-
-  create(powerpoint, color) {
-    for (let i = 0; i < this.pages.length; i++) {
-      this.pages[i].create(powerpoint, color);
-    }
-  }
-}
-
-class LayChienThienChua {
-  constructor() {
-    this.pages = [
-      new FirstPage(
-        "LẠY CHIÊN THIÊN CHÚA",
-        "Lạy Chiên Thiên Chúa Đấng xóa tội trần gian: Xin thương xót chúng con.",
-        {
-          title: {
-            x: "0%",
-            y: 0.255354331,
-            w: "100%",
-            h: "20%",
-            color: "FFFF00",
-            fontFace: "Times New Roman",
-            fontSize: 66,
-            bold: true,
-            align: "center",
-            valign: "top",
-          },
-          text: lyricsPropsWithFontSize({ fontSize: 66, y: 1.54 }),
-        }
-      ),
-      new SecondPage(
-        "Lạy Chiên Thiên Chúa Đấng xóa tội trần gian: Xin thương xót chúng con."
-      ),
-      new SecondPage(
-        "Lạy Chiên Thiên Chúa Đấng xóa tội trần gian: Xin ban bình an cho chúng con."
-      ),
-    ];
-  }
-
-  create(powerpoint, color) {
-    for (let i = 0; i < this.pages.length; i++) {
-      this.pages[i].create(powerpoint, color);
-    }
-  }
-}
-
-class ThanhThanhThanh {
-  constructor() {
-    this.pages = [
-      new FirstPage(
-        "THÁNH, THÁNH, THÁNH",
-        "Chúa là Thiên Chúa các đạo binh. Trời đất đầy vinh quang Chúa.",
-        {
-          title: {
-            x: "0%",
-            y: 0.205354331,
-            w: "100%",
-            h: "20%",
-            color: "FFFF00",
-            fontFace: "Times New Roman",
-            fontSize: 66,
-            bold: true,
-            align: "center",
-            valign: "top",
-          },
-          text: lyricsPropsWithFontSize({ fontSize: 66, y: 1.54 }),
-        }
-      ),
-      new SecondPage(
-        "Hoan hô Chúa trên các tầng trời. Chúc tụng Đấng ngự đến nhân danh Chúa. Hoan hô Chúa trên các tầng trời."
-      ),
-    ];
-  }
-
-  create(powerpoint, color) {
-    for (let i = 0; i < this.pages.length; i++) {
-      this.pages[i].create(powerpoint, color);
-    }
-  }
-}
-
-class MauNhiemDucTin {
-  constructor() {}
-
-  create(powerpoint, color) {
-    let newSlide = powerpoint.addSlide({ masterName: color });
-    newSlide.addImage(mauNhiemDucTinProps);
-    newSlide.addText(
-      [
-        {
-          text: "Chủ tế:",
-          options: { fontSize: 52, color: "FFFF00", italic: true },
-        },
-        {
-          text: "\nĐây là mầu nhiệm đức tin.",
-          options: { fontSize: 60, color: "FFFFFF" },
-        },
-      ],
-      mauNhiemDucTinLMProps
-    );
-    newSlide.addText(
-      [
-        {
-          text: "Cộng đoàn:",
-          options: { fontSize: 52, color: "FFFF00", italic: true },
-        },
-        {
-          text: "\nLạy Chúa cứu thế, Chúa đã dùng thánh giá, và sự phục sinh của Chúa để giải thoát chúng con. Xin cứu độ chúng con.",
-          options: { fontSize: 60, color: "FFFFFF" },
-        },
-      ],
-      mauNhiemDucTinCongDoanProps
-    );
-  }
-}
-
-class KinhTruocRuocLe {
-  constructor() {
-    this.pages = [
-      new FirstPage(
-        "KINH\nDỌN MÌNH RƯỚC LỄ",
-        "Lạy Chúa Giêsu, con tin thật Chúa đang ngự trong tấm bánh bé nhỏ trên bàn thờ.",
-        {
-          title: {
-            x: "0%",
-            y: 0.165354331,
-            w: "100%",
-            h: "20%",
-            color: "FFFF00",
-            fontFace: "Times New Roman",
-            fontSize: 72,
-            bold: true,
-            align: "center",
-            valign: "top",
-          },
-          text: lyricsPropsWithFontSize({ fontSize: 66, y: "35%" }),
-        }
-      ),
-      new SecondPage(
-        "Chúa là Thiên Chúa thật và là người thật, đã trở nên lương thực nuôi sống chúng con, trên đường về quê trời."
-      ),
-      new SecondPage(
-        "Chúa muốn ở lại trong con, và con cũng  muốn ước ao rước Chúa vào lòng, để được ở lại trong Chúa."
-      ),
-      new SecondPage(
-        "Nhưng con biết, mình còn nhiều tội lỗi, chẳng đáng Chúa đến thăm. Xin Chúa tẩy sạch quả tim con, để con nên trong trắng."
-      ),
-      new SecondPage(
-        "Xin Chúa mở rộng tâm hồn con, để con đừng từ chối Chúa sự gì. Lạy Chúa Giêsu, con yêu mến Chúa,"
-      ),
-      new SecondPage(
-        "Xin Chúa mau đến với con. Lạy Mẹ Maria xin giúp con xứng đáng đón rước Chúa Giêsu.",
-        66,
-        " Amen."
-      ),
-    ];
-  }
-
-  create(powerpoint, color) {
-    for (let i = 0; i < this.pages.length; i++) {
-      this.pages[i].create(powerpoint, color);
-    }
-  }
-}
-
-class KinhSauRuocLe {
-  constructor() {
-    this.pages = [
-      new FirstPage(
-        "KINH CÁM ƠN SAU KHI\nRƯỚC LỄ",
-        "Lạy Chúa Giêsu, con tin Chúa đang ngự trong lòng con. Con cung kính thờ lạy Chúa là Thiên Chúa uy nghi cao cả.",
-        {
-          title: {
-            x: "0%",
-            y: 0.165354331,
-            w: "100%",
-            h: "20%",
-            color: "FFFF00",
-            fontFace: "Times New Roman",
-            fontSize: 66,
-            bold: true,
-            align: "center",
-            valign: "top",
-          },
-          text: lyricsPropsWithFontSize({ fontSize: 66, y: "30%" }),
-        }
-      ),
-      new SecondPage(
-        "Con sung sướng vì Chúa đến thăm con, dù con không xứng đáng. Lạy Chúa Giêsu, xin ở lại với con mãi mãi, trong suốt cuộc đời con."
-      ),
-      new SecondPage(
-        "Xin làm cho con nên giống Chúa: hiền hậu và khiêm nhường, chăm chỉ và bác ái, hiếu thảo và vui tươi. Xin làm cho con nhớ rằng:"
-      ),
-      new SecondPage(
-        '"Chúa đang ngự trong con, và con có bổn phận đem Chúa đến mọi nơi, ở nhà và ở trường, trong khu xóm và ngoài đường phố"'
-      ),
-      new SecondPage(
-        "Để tất cả những người bạn của con nhận biết Chúa, và sống yêu thương nhau."
-      ),
-      new SecondPage(
-        "Lạy Chúa Giêsu, con quyết tâm sống theo lời Chúa dạy, để đáp lại tình Chúa yêu con."
-      ),
-      new SecondPage(
-        "Có Chúa, con không sợ hy sinh. Có Chúa, con đủ sức tránh xa tội lỗi và sống trung thành với Chúa suốt đời con."
-      ),
-      new SecondPage(
-        "Lạy Chúa Giêsu, con yêu mến Chúa. Lạy Chúa Giêsu, con yêu mến Chúa biết bao.",
-        66,
-        " Amen."
-      ),
-    ];
-  }
-
-  create(powerpoint, color) {
-    for (let i = 0; i < this.pages.length; i++) {
-      this.pages[i].create(powerpoint, color);
-    }
-  }
-}
-
-class FirstPage {
-  constructor(title, text, firstPageProps) {
-    this.title = title;
-    this.text = text;
-    this.firstPageProps = firstPageProps;
-  }
-  create(powerpoint, color) {
-    let newSlide = powerpoint.addSlide({ masterName: color });
-    newSlide.addText(this.title, this.firstPageProps.title);
-    newSlide.addText(this.text, this.firstPageProps.text);
-  }
-}
-
-class SecondPage {
-  constructor(text, fontSize = 66, end = "") {
-    this.text = text;
-    this.end = end;
-    this.fontSize = fontSize;
-  }
-
-  create(powerpoint, color) {
-    // If there is no end, text of end is empty -> only text will be displayed
-    let newSlide = powerpoint.addSlide({ masterName: color });
-    newSlide.addText(
-      [
-        {
-          text: this.text,
-          options: lyricsPropsWithFontSize({ fontSize: this.fontSize }),
-        },
-        {
-          text: this.end,
-          options: lyricsPropsWithFontSize({
-            fontSize: this.fontSize,
-            color: "FFFF00",
-          }),
-        },
-      ],
-      lyricsPropsWithFontSize({ fontSize: this.fontSize })
-    );
-  }
-}
-
-class EucharisticYouthSong {
-  constructor() {
-    this.pages = [
-      "Thiếu nhi Việt Nam đứng lên trong giai đoạn mới. Theo tiếng Giáo Hội và tiếng quê hương kêu mời.",
-      "Được trang bị dũng mạnh bằng tinh thần mới. Tuổi trẻ Việt Nam hăng hái xây thế hệ ngày mai.",
-      "Cùng đi hỡi các thiếu nhi. Cùng đi với Chúa Kitô, nguồn sống Thánh Thể chan hòa, là lý tưởng của người thiếu nhi hôm nay.",
-      "Thiếu nhi Việt Nam quyết tâm trong giai đoạn mới. Thánh hóa môi trường rèn những khả năng phi thường.",
-      "Bằng nguyện cầu hi sinh và một bầu khí mới. Tuổi trẻ Việt Nam đem Chúa cho giới trẻ mọi nơi.",
-    ];
-    this.title = "THIẾU NHI\nTÂN HÀNH CA";
-  }
-  create(powerpoint, color) {
-    let newSlide = powerpoint.addSlide({ masterName: color });
-    newSlide.addText(this.title, titlePropsWithY("40%"));
-    newSlide.addText(this.songPart, sectionOfTitleProps);
-    newSlide.addImage(logoXuDoanProps);
-    newSlide.addImage(namMucVuProps);
-
-    for (let i = 0; i < this.pages.length; i++) {
-      let newSlide = powerpoint.addSlide({ masterName: color });
-      newSlide.addText(
-        this.pages[i],
-        lyricsPropsWithFontSize({ fontSize: 66 })
-      );
-    }
-  }
-}
-
-// Transition slide
-class Transition {
-  constructor() {
-    this.color = "Black";
-  }
-  create(powerpoint, color) {
-    powerpoint.addSlide({ masterName: this.color });
-  }
-}
-
-// Song slide
-class Song {
-  // let verse1 = new Lyric("1. Một tấm bánh trắng chúng con hiệp dâng, nguyện nên sức thiêng dưỡng nuôi trần gian. Một ly rượu nho thắm hương thơm ngát, sự sống muôn đời chính Cha ban tặng.");
-  // (title, songPart, [verse1, chorus, verse2, chorus])
-  constructor(title, songPart, arrVerse = []) {
-    // arrVerse : array of Lyric Object
-    this.title = title;
-    this.songPart = songPart;
-    this.arrVerse = arrVerse;
-  }
-
-  create(powerpoint, color) {
-    this.createTitle(powerpoint, color);
-    // Create slides for each verse
-    for (let i = 0; i < this.arrVerse.length; i++) {
-      // Create different slides for each page of verse
-      for (let j = 0; j < this.arrVerse[i].pages.length; j++) {
-        switch (this.arrVerse[i].pages[j].level) {
-          case 0:
-            this.createFirstOrderLyric(
-              powerpoint,
-              color,
-              this.arrVerse[i].pages[j].text
-            );
-            break;
-          case 1:
-            this.createSecondOrderLyric(
-              powerpoint,
-              color,
-              this.arrVerse[i].pages[j].text
-            );
-            break;
-          default:
-            console.log("Error: Level of lyric is not defined");
-        }
+function patchVerse(songVerses, orderOfVerses) {
+  let patchedSongVerses = [];
+  for (let i = 0; i < orderOfVerses.length; i++) {
+    for (let j = 0; j < songVerses.length; j++) {
+      if (songVerses[j].type === orderOfVerses[i]) {
+        patchedSongVerses.push(songVerses[j].verse);
       }
     }
   }
-
-  createTitle(powerpoint, color) {
-    let newSlide = powerpoint.addSlide({ masterName: color });
-    newSlide.addText(this.songPart, sectionOfTitleProps);
-    newSlide.addText(this.title, titlePropsWithY());
-    newSlide.addImage(logoXuDoanProps);
-    newSlide.addImage(namMucVuProps);
-  }
-
-  createFirstOrderLyric(powerpoint, color, text) {
-    let newSlide = powerpoint.addSlide({ masterName: color });
-    let fontSize = calculateFontSize(text);
-    newSlide.addText(
-      [
-        {
-          text: extractPreLyrics(text),
-          options: { color: "FFFF00" },
-        },
-        {
-          text: extractLyrics(text),
-        },
-      ],
-      lyricsPropsWithFontSize({ fontSize: fontSize })
-    );
-  }
-  createSecondOrderLyric(powerpoint, color, text) {
-    let newSlide = powerpoint.addSlide({ masterName: color });
-    let fontSize = calculateFontSize(text);
-    newSlide.addText(text, lyricsPropsWithFontSize({ fontSize: fontSize }));
-  }
+  console.log("patchedSongVerses: ", patchedSongVerses);
+  return patchedSongVerses;
 }
-
-// Input of song slides
-class Verse {
-  constructor(lyric) {
-    this.pages = [];
-    this.distributeToPages(lyric);
-  }
-
-  // Distribute single lyric into pages
-  distributeToPages(lyric) {
-    // Split the lyric into sentences
-    let sentences = extractLyrics(lyric).split(/(?<=\.)/);
-    sentences[0] = extractPreLyrics(lyric) + sentences[0];
-
-    // Distribute the sentences into pages
-    let page = "";
-    let characterCount = 0;
-    for (let i = 0; i < sentences.length; i++) {
-      if (characterCount + sentences[i].length < characterPerSlideLimit) {
-        page += sentences[i];
-        characterCount += sentences[i].length;
-      } else {
-        this.pages.push({
-          text: page,
-          level: 1,
-        });
-        page = sentences[i];
-        characterCount = sentences[i].length;
-      }
-    }
-    this.pages.push({
-      text: page,
-      level: 1,
+function patchData(file) {
+  return new Promise((resolve, reject) => {
+    let songVerses = [];
+    let myInterface = rl.createInterface({
+      input: fs.createReadStream(file),
     });
-    this.pages[0].level = 0;
-    // Remove first space character
-    // Alternative: remove all level 1 pages
-    for (let i = 0; i < this.pages.length; i++) {
-      if (this.pages[i].text[0] === " ") {
-        this.pages[i].text = this.pages[i].text.substring(1);
-      }
-    }
-  }
-}
 
-class DapCaVaAlleluia {
-  constructor(title, lyrics) {
-    this.pages = [];
-    this.distributeToPages(lyrics);
-    this.title = title;
-  }
-
-  create(powerpoint, color) {
-    let newSlide = powerpoint.addSlide({ masterName: color });
-    newSlide.addText(this.title, {
-      x: "0%",
-      y: 0.205354331,
-      w: "100%",
-      h: "20%",
-      color: "FFFF00",
-      fontFace: "Times New Roman",
-      fontSize: 72,
-      bold: true,
-      align: "center",
-      valign: "top",
+    // Process each line
+    myInterface.on("line", function (line) {
+      const verseType = MyPPTX.defineVerseType(line);
+      songVerses.push({
+        type: verseType,
+        verse: new MyPPTX.Verse(line),
+      });
     });
-    newSlide.addText(
-      this.pages[0],
-      lyricsPropsWithFontSize({
-        fontSize: calcFontDapCa(this.pages[0]),
-        y: 1.54,
-      })
-    ); // calcFontDapCa is used to calculate font size for Dap Ca First Page
-    for (let i = 1; i < this.pages.length; i++) {
-      let newSlide = powerpoint.addSlide({ masterName: color });
-      newSlide.addText(
-        this.pages[i],
-        lyricsPropsWithFontSize({ fontSize: calculateFontSize(this.pages[0]) })
-      );
-    }
-  }
-  // Distribute according to number of characters
-  distributeToPages(lyric) {
-    // Split the lyric into sentences
-    let sentences = lyric.split(/(?<=\.)/);
-    // Distribute the sentences into pages
-    let page = "";
-    let characterCount = 0;
-    for (let i = 0; i < sentences.length; i++) {
-      // First page: 150 characters
-      if (this.pages.length === 0) {
-        if (characterCount + sentences[i].length < 150) {
-          page += sentences[i];
-          characterCount += sentences[i].length;
-        } else {
-          this.pages.push(page);
-          page = sentences[i];
-          characterCount = sentences[i].length;
-        }
-      }
-      // Other pages: 170 characters
-      else if (characterCount + sentences[i].length < characterPerSlideLimit) {
-        page += sentences[i];
-        characterCount += sentences[i].length;
-      } else {
-        this.pages.push(page);
-        page = sentences[i];
-        characterCount = sentences[i].length;
-      }
-    }
-    this.pages.push(page);
-    // Remove first space character
-    // Alternative: remove all level 1 pages
-    for (let i = 0; i < this.pages.length; i++) {
-      if (this.pages[i][0] === " ") {
-        this.pages[i] = this.pages[i].substring(1);
-      }
-    }
-  }
-}
 
-class KinhThuongXot {
-  constructor() {
-    this.pages = [
-      new FirstPage(
-        "KINH THƯƠNG XÓT",
-        "Xin Chúa thương xót chúng con. Xin Chúa thương xót chúng con.",
-        {
-          title: {
-            x: "0%",
-            y: 0.605354331,
-            w: "100%",
-            h: "20%",
-            color: "FFFF00",
-            fontFace: "Times New Roman",
-            fontSize: 66,
-            bold: true,
-            align: "center",
-            valign: "top",
-          },
-          text: lyricsPropsWithFontSize({ fontSize: 66, y: 2.04 }),
-        }
-      ),
-      new SecondPage(
-        "Xin Chúa Ki-tô thương xót chúng con. Xin Chúa Ki-tô thương xót chúng con."
-      ),
-      new SecondPage(
-        "Xin Chúa thương xót chúng con. Xin Chúa thương xót chúng con."
-      ),
-    ];
-  }
-
-  create(powerpoint, color) {
-    for (let i = 0; i < this.pages.length; i++) {
-      this.pages[i].create(powerpoint, color);
-    }
-  }
-}
-
-class TinMung {
-  constructor(tinMung) {
-    this.tinMung = tinMung;
-  }
-  create(powerpoint, color) {
-    let newSlide = powerpoint.addSlide({ masterName: color });
-    newSlide.addImage(tinMungProps);
-    newSlide.addText(this.tinMung, {
-      x: 3.0984252,
-      y: 1.2519685,
-      w: 8.58267717,
-      h: 1.20866142,
-      color: "FFFFFF",
-      outline: { size: 1.6, color: "000000" },
-      fontFace: "Times New Roman",
-      fontSize: 66,
-      bold: true,
-      align: "center",
-      valign: "top",
+    // Resolve promise when the file reading is complete
+    myInterface.on("close", function () {
+      resolve(songVerses);
     });
-  }
-}
-// Với kinh đánh số, thứ nhất khác: "thứ nhất:" + "[space] + nội dung"
-class KinhDanhSo {
-  constructor(
-    title,
-    firstPage,
-    otherPages,
-    addition = {
-      lastPage: {},
-      tammoiphuc: false,
-    }
-  ) {
-    // 5 or 8 or 10
-    this.title = title;
-    this.firstPage = firstPage;
-    this.otherPages = otherPages;
-    this.addition = addition;
-  }
-
-  create(powerpoint, color) {
-    let newSlide = powerpoint.addSlide({ masterName: color });
-    newSlide.addText(this.title, {
-      x: "0%",
-      y: 0.205354331,
-      w: "100%",
-      h: "20%",
-      color: "FFFF00",
-      fontFace: "Times New Roman",
-      fontSize: 60,
-      bold: true,
-      align: "center",
-      valign: "top",
+    myInterface.on("error", function (err) {
+      reject(err);
     });
-    let lyricProps = lyricsPropsWithFontSize({ fontSize: 60, y: 1.2519685 });
-    let thuTuProps = {
-      fontSize: 60,
-      color: "FFFF00",
-    };
-    if (this.addition.tammoiphuc) {
-      lyricProps = lyricsPropsWithFontSize({ fontSize: 60, y: 2.08267717 });
-      thuTuProps.underline = true;
-    }
-    newSlide.addText(
-      [
-        {
-          text: this.firstPage.intro,
-          options: { fontSize: 60, color: "FFFFFF" },
-        },
-        {
-          text: this.firstPage.thuTu,
-          options: thuTuProps,
-        },
-        {
-          text: this.firstPage.noiDung,
-          options: { fontSize: 60, color: "FFFFFF" },
-        },
-      ],
-      lyricProps
-    );
-    this.createMultiple(powerpoint, color, this.otherPages);
-    if (!_.isEmpty(this.addition.lastPage)) {
-      newSlide = powerpoint.addSlide({ masterName: color });
-      newSlide.addText(
-        [
-          {
-            text: this.addition.lastPage.noiDung,
-            options: { fontSize: 60, color: "FFFFFF" },
-          },
-          {
-            text: this.addition.lastPage.end,
-            options: { fontSize: 60, color: "FFFF00" },
-          },
-        ],
-        lyricsPropsWithFontSize({ fontSize: 60 })
-      );
-    }
-  }
-  createMultiple(powerpoint, color, pages) {
-    // [[Thứ nhất: ..., Thứ hai: ...], ...]
-    // Page level
-    for (let i = 0; i < pages.length; i++) {
-      let newSlide = powerpoint.addSlide({ masterName: color });
-      // Thứ level
-      let arrayThuTu = [];
-      for (let j = 0; j < pages[i].length; j++) {
-        // Split the text into thứ tự and nội dung
-        let thuTu = () => {
-          for (let k = 0; k < pages[i][j].length; k++) {
-            if (pages[i][j][k] === ":") {
-              return pages[i][j].substring(0, k + 1);
-            }
-          }
-        };
-        let noiDung = () => {
-          for (let k = 0; k < pages[i][j].length; k++) {
-            if (pages[i][j][k] === ":") {
-              return pages[i][j].substring(k + 1);
-            }
-          }
-        };
-        // Set lyric properties and thứ tự properties if tammoiphuc
-        let lyricProps = lyricsPropsWithFontSize({ fontSize: 60 });
-        let thuTuProps = {
-          fontSize: 60,
-          color: "FFFF00",
-        };
-        if (this.addition.tammoiphuc) {
-          thuTuProps.underline = true;
-        }
-        // push thứ tự and nội dung into array
-        arrayThuTu.push(
-          {
-            text: thuTu(),
-            options: thuTuProps,
-          },
-          {
-            text: noiDung(),
-            options: { fontSize: 60, color: "FFFFFF" },
-          }
-        );
-        // If not the last line of the page
-        if (j !== pages[i].length - 1) {
-          arrayThuTu.push({
-            text: "\n",
-            options: { fontSize: 60, color: "FFFFFF" },
-          });
-        }
-        // Add text
-        newSlide.addText(arrayThuTu, lyricProps);
-      }
-    }
-  }
+  });
 }
-
-class KinhDucChuaThanhThan {
-  constructor() {
-    this.pages = [
-      new FirstPage(
-        "KINH\nĐỨC CHÚA THÁNH THẦN",
-        "Chúng con lạy ơn Đức Chúa Thánh Thần thiêng liêng sáng láng vô cùng.",
-        {
-          title: {
-            x: "0%",
-            y: 0.165354331,
-            w: "100%",
-            h: "35%",
-            color: "FFFF00",
-            fontFace: "Times New Roman",
-            fontSize: 60,
-            bold: true,
-            align: "center",
-            valign: "top",
-          },
-          text: lyricsPropsWithFontSize({ fontSize: 60, y: 2.26771654 }),
-        }
-      ),
-      new SecondPage(
-        "Chúng con xin Đức Chúa Thánh Thần xuống đầy lòng chúng con, là kẻ tin cậy Đức Chúa Trời, và đốt lửa kính mến Đức Chúa Trời trong lòng chúng con.",
-        60
-      ),
-      new SecondPage(
-        "Chúng con xin Đức Chúa Trời cho Đức Chúa Thánh Thần xuống. Sửa lại mọi sự trong ngoài chúng con.",
-        60
-      ),
-      new SecondPage(
-        "Chúng con cầu cùng Đức Chúa Trời xưa đã cho Đức Chúa Thánh Thần xuống soi lòng dạy dỗ các Thánh Tông đồ.",
-        60
-      ),
-      new SecondPage(
-        "Thì rày chúng con cũng xin Đức Chúa Trời cho Đức Chúa Thánh Thần lại xuống,",
-        60
-      ),
-      new SecondPage(
-        "An ủi dạy dỗ chúng con làm những việc lành, vì công nghiệp vô cùng Đức Chúa Giê-su Kitô là Chúa chúng con.",
-        60,
-        "\nAmen."
-      ),
-    ];
-  }
-  create(powerpoint, color) {
-    for (let i = 0; i < this.pages.length; i++) {
-      this.pages[i].create(powerpoint, color);
-    }
-  }
-}
-
-class MoiCacEmQuy {
-  constructor() {}
-  create(powerpoint, color) {
-    let newSlide = powerpoint.addSlide({ masterName: color });
-    newSlide.addText("Mời\ncộng đoàn\nvà các em\nquỳ!!", {
-      x: 1.66535433,
-      y: 0.251968504,
-      w: 5.33464567,
-      h: 6.66535433,
-      color: "000000",
-      fontSize: 54,
-      fontFace: "Times New Roman",
-      bold: true,
-      align: "center",
-      valign: "middle",
-      shape: powerpoint.ShapeType.cloud,
-      fill: { color: "FFFFFF" },
-      line: { color: "4F81BD", width: 2 },
-    });
-    newSlide.addImage(moiCacEmQuyProps);
-  }
-}
-
-class NavigationPage {
-  constructor() {}
-  create(powerpoint, color) {
-    let newSlide = powerpoint.addSlide({ masterName: color });
-    let originalPos = [2.08267717, 0.634645669];
-    let width = 4.28740157;
-    let height = 1.56535433;
-    let xSpace = 0.7533070868999994;
-    let ySpace = 0.805354331;
-    let section = ["NHẬP LỄ", "DÂNG LỄ", "ĐÁP CA", "HIỆP LỄ", "KẾT LỄ"];
-    let position = [
-      originalPos,
-      [originalPos[0] + width + xSpace, originalPos[1]],
-      [originalPos[0], originalPos[1] + ySpace + height],
-      [originalPos[0] + width + xSpace, originalPos[1] + ySpace + height],
-      [
-        originalPos[0] + (width + xSpace) / 2,
-        originalPos[1] + 2 * height + 2 * ySpace,
-      ],
-    ];
-    for (let i = 0; i < position.length; i++) {
-      newSlide.addText(section[i], boxModel(position[i][0], position[i][1]));
-    }
-  }
-}
-
-class BaiDocVaTinMung {
-  constructor(baidoc2, tinmung) {
-    this.baidoc2 = baidoc2;
-    this.tinmung = tinmung;
-  }
-  create(powerpoint, color) {
-    let newSlide = powerpoint.addSlide({ masterName: color });
-    let text = [
-      ["Bài đọc 2:\n", this.baidoc2],
-      ["Tin Mừng:\n", this.tinmung],
-    ];
-    let originalPos = [2.48818898, 0.665354331];
-    let width = 8.58267717;
-    let height = 2.91732283;
-    let ySpace = 0.33464567800000045;
-    let position = [
-      originalPos,
-      [originalPos[0], originalPos[1] + height + ySpace],
-    ];
-    for (let i = 0; i < text.length; i++) {
-      newSlide.addText(
-        [
-          {
-            text: text[i][0],
-            options: { underline: true },
-          },
-          {
-            text: text[i][1],
-            options: {},
-          },
-        ],
-        {
-          x: position[i][0],
-          y: position[i][1],
-          w: width,
-          h: height,
-          color: "FFFFFF",
-          fontFace: "Times New Roman",
-          fontSize: 72,
-          bold: true,
-          align: "center",
-          valign: "middle",
-          outline: { size: 1.6, color: "000000" },
-          shape: powerpoint.ShapeType.rect,
-          fill: { color: "9BC348" },
-          line: { color: "F3FF95", width: 2, transparency: 40 },
-        }
-      );
-    }
-  }
-}
-
-
-let verse1 = new Verse(
-  "1. Một tấm bánh trắng chúng con hiệp dâng, nguyện nên sức thiêng dưỡng nuôi trần gian. Một ly rượu nho thắm hương thơm ngát, sự sống muôn đời chính Cha ban tặng."
-);
-let verse2 = new Verse(
-  "2. Rộn vang giai khúc tán dương ngợi ca, kỳ công khắp nơi chính Cha làm ra. Ngài gieo khúc hát trong lòng con mãi, nguyện suốt cuộc đời hát khen Danh Ngài."
-);
-
-let chorus = new Verse(
-  "ĐK. Đây tâm tình, lòng con thảo kính, xin tiến dâng Cha với cả tình yêu. Này bánh thơm, đây ly rượu nồng, nguyện Cha đoái thương đến trái tim hồng, rộng ban thánh ân bao la thỏa lòng, con ước mong."
-);
-let orderOfLyrics = [verse1, chorus, verse2, chorus];
-
-// MAIN
-let nhapLe = new Song("GIAI KHÚC DÂNG TIẾN 4", "Nhập lễ", orderOfLyrics);
-let dangLe = new Song("GIAI KHÚC DÂNG TIẾN 4", "Dâng lễ", orderOfLyrics);
-let hiepLe = new Song("GIAI KHÚC DÂNG TIẾN 4", "Hiệp lễ", orderOfLyrics);
-let chaMe = new Song("GIAI KHÚC DÂNG TIẾN 4", "", orderOfLyrics);
-let ketLe = new Song("GIAI KHÚC DÂNG TIẾN 4", "Kết lễ", orderOfLyrics);
-let transition = new Transition();
-let eucharisticYouthSong = new EucharisticYouthSong();
-let kinhTruocRuocLe = new KinhTruocRuocLe();
-let kinhSauRuocLe = new KinhSauRuocLe();
-let kinhVinhDanh = new KinhVinhDanh();
-let kinhThuongXot = new KinhThuongXot();
-let alleluia = new DapCaVaAlleluia(
-  "ALLELUIA - ALLELUIA",
-  "Chúa phán: “Thầy là đường, là sự thật và là sự sống. Không ai đến được với Cha mà lại không qua Thầy”."
-);
-let dapCa = new DapCaVaAlleluia(
-  "ĐÁP CA",
-  "Tôi sẽ bước đi trước Thiên Nhan của Chúa."
-);
-let tinMung = new TinMung("Mc 8, 27-35");
-let kinhDucChuaThanhThan = new KinhDucChuaThanhThan();
-let kinhMuoiDieuRan = new KinhDanhSo(
-  "KINH MƯỜI ĐIỀU RĂN",
-  {
-    intro: "Đạo Đức Chúa Trời có Mười Điều răn:\n",
-    thuTu: "Thứ nhất:",
-    noiDung: " Thờ phượng một Đức Chúa Trời và kính mến Người trên hết mọi sự.",
-  },
-  [
-    [
-      "Thứ hai: Chớ kêu tên Đức Chúa Trời vô cớ.",
-      "Thứ ba: Giữ ngày Chúa Nhật.",
-      "Thứ bốn: Thảo kính cha mẹ.",
-    ],
-    [
-      "Thứ năm: Chớ giết người.",
-      "Thứ sáu: Chớ làm sự dâm dục.",
-      "Thứ bảy: Chớ lấy của người.",
-    ],
-    [
-      "Thứ tám : Chớ làm chứng dối.",
-      "Thứ chín: Chớ muốn vợ chồng người.",
-      "Thứ mười: Chớ tham của người.",
-    ],
-  ],
-  {
-    lastPage: {
+function executePowerpoint(orderOfLyrics) {
+  console.log("orderOfLyrics: ", orderOfLyrics);
+  // MAIN
+  let nhapLe = new MyPPTX.Song(
+    "GIAI KHÚC DÂNG TIẾN 4",
+    "Nhập lễ",
+    orderOfLyrics
+  );
+  let dangLe = new MyPPTX.Song(
+    "GIAI KHÚC DÂNG TIẾN 4",
+    "Dâng lễ",
+    orderOfLyrics
+  );
+  let hiepLe = new MyPPTX.Song(
+    "GIAI KHÚC DÂNG TIẾN 4",
+    "Hiệp lễ",
+    orderOfLyrics
+  );
+  let chaMe = new MyPPTX.Song("GIAI KHÚC DÂNG TIẾN 4", "", orderOfLyrics);
+  let ketLe = new MyPPTX.Song("GIAI KHÚC DÂNG TIẾN 4", "Kết lễ", orderOfLyrics);
+  let transition = new MyPPTX.Transition();
+  let eucharisticYouthSong = new MyPPTX.EucharisticYouthSong();
+  let kinhTruocRuocLe = new MyPPTX.KinhTruocRuocLe();
+  let kinhSauRuocLe = new MyPPTX.KinhSauRuocLe();
+  let kinhVinhDanh = new MyPPTX.KinhVinhDanh();
+  let kinhThuongXot = new MyPPTX.KinhThuongXot();
+  let alleluia = new MyPPTX.DapCaVaAlleluia(
+    "ALLELUIA - ALLELUIA",
+    "Chúa phán: “Thầy là đường, là sự thật và là sự sống. Không ai đến được với Cha mà lại không qua Thầy”."
+  );
+  let dapCa = new MyPPTX.DapCaVaAlleluia(
+    "ĐÁP CA",
+    "Tôi sẽ bước đi trước Thiên Nhan của Chúa."
+  );
+  let tinMung = new MyPPTX.TinMung("Mc 8, 27-35");
+  let kinhDucChuaThanhThan = new MyPPTX.KinhDucChuaThanhThan();
+  let kinhMuoiDieuRan = new MyPPTX.KinhDanhSo(
+    "KINH MƯỜI ĐIỀU RĂN",
+    {
+      intro: "Đạo Đức Chúa Trời có Mười Điều răn:\n",
+      thuTu: "Thứ nhất:",
       noiDung:
-        "Mười Điều răn ấy tóm về hai điều mà chớ: trước kính mến một Đức Chúa Trời trên hết mọi sự, sau là yêu người như mình ta vậy. ",
-      end: "Amen.",
+        " Thờ phượng một Đức Chúa Trời và kính mến Người trên hết mọi sự.",
     },
-  }
-);
-let kinhNamDieuRan = new KinhDanhSo(
-  "KINH NĂM ĐIỀU RĂN",
-  {
-    intro: "Hội Thánh có năm điều răn:\n",
-    thuTu: "Thứ nhất:",
-    noiDung:
-      " Tham dự Thánh Lễ và kiêng việc xác ngày Chúa Nhật cùng các ngày lễ buộc.",
-  },
-  [
     [
-      "Thứ hai: Xưng tội trong một năm ít là một lần.",
-      "Thứ ba: Chịu Mình Thánh Đức Chúa Giêsu trong mùa Phục Sinh.",
+      [
+        "Thứ hai: Chớ kêu tên Đức Chúa Trời vô cớ.",
+        "Thứ ba: Giữ ngày Chúa Nhật.",
+        "Thứ bốn: Thảo kính cha mẹ.",
+      ],
+      [
+        "Thứ năm: Chớ giết người.",
+        "Thứ sáu: Chớ làm sự dâm dục.",
+        "Thứ bảy: Chớ lấy của người.",
+      ],
+      [
+        "Thứ tám : Chớ làm chứng dối.",
+        "Thứ chín: Chớ muốn vợ chồng người.",
+        "Thứ mười: Chớ tham của người.",
+      ],
     ],
+    {
+      lastPage: {
+        noiDung:
+          "Mười Điều răn ấy tóm về hai điều mà chớ: trước kính mến một Đức Chúa Trời trên hết mọi sự, sau là yêu người như mình ta vậy. ",
+        end: "Amen.",
+      },
+    }
+  );
+  let kinhNamDieuRan = new MyPPTX.KinhDanhSo(
+    "KINH NĂM ĐIỀU RĂN",
+    {
+      intro: "Hội Thánh có năm điều răn:\n",
+      thuTu: "Thứ nhất:",
+      noiDung:
+        " Tham dự Thánh Lễ và kiêng việc xác ngày Chúa Nhật cùng các ngày lễ buộc.",
+    },
     [
-      "Thứ bốn: Kiêng thịt và giữ chay những ngày Hội Thánh buộc.",
-      "Thứ năm: Đóng góp theo khả năng cho nhu cầu vật chất của Hội Thánh.",
-    ],
-  ]
-);
-let kinhTamMoiPhucThat = new KinhDanhSo(
-  "KINH\nTÁM MỐI PHÚC THẬT",
-  {
-    intro: "Phúc Thật Tám Mối:\n",
-    thuTu: "Thứ nhất:",
-    noiDung:
-      " Ai có lòng khó khăn ấy là phúc thật, vì chưng Nước Ðức Chúa Trời là của mình vậy.",
-  },
-  [
+      [
+        "Thứ hai: Xưng tội trong một năm ít là một lần.",
+        "Thứ ba: Chịu Mình Thánh Đức Chúa Giêsu trong mùa Phục Sinh.",
+      ],
+      [
+        "Thứ bốn: Kiêng thịt và giữ chay những ngày Hội Thánh buộc.",
+        "Thứ năm: Đóng góp theo khả năng cho nhu cầu vật chất của Hội Thánh.",
+      ],
+    ]
+  );
+  let kinhTamMoiPhucThat = new MyPPTX.KinhDanhSo(
+    "KINH\nTÁM MỐI PHÚC THẬT",
+    {
+      intro: "Phúc Thật Tám Mối:\n",
+      thuTu: "Thứ nhất:",
+      noiDung:
+        " Ai có lòng khó khăn ấy là phúc thật, vì chưng Nước Ðức Chúa Trời là của mình vậy.",
+    },
     [
-      "Thứ hai: Ai hiền lành ấy là phúc thật, vì chưng sẽ được đất Ðức Chúa Trời làm của mình vậy.",
+      [
+        "Thứ hai: Ai hiền lành ấy là phúc thật, vì chưng sẽ được đất Ðức Chúa Trời làm của mình vậy.",
+      ],
+      [
+        "Thứ ba: Ai khóc lóc ấy là phúc thật, vì chưng sẽ được yên ủi vậy.",
+        "Thứ bốn: Ai khao khát nhân đức trọn lành ấy là phúc thật, vì chưng sẽ được no đủ vậy.",
+      ],
+      [
+        "Thứ năm: Ai thương xót người ấy là phúc thật, vì chưng sẽ được thương xót vậy.",
+      ],
+      [
+        "Thứ sáu: Ai giữ lòng sạch sẽ ấy là phúc thật, vì chưng sẽ được thấy mặt Ðức Chúa Trời vậy.",
+      ],
+      [
+        "Thứ bảy: Ai làm cho người hòa thuận ấy là phúc thật, vì chưng sẽ được gọi là con Ðức Chúa Trời vậy.",
+      ],
+      [
+        "Thứ tám: Ai chịu khốn nạn vì Ðạo ngay ấy là phúc thật, vì chưng Nước Ðức Chúa Trời là của mình vậy.",
+      ],
     ],
+    { tammoiphuc: true }
+  );
+  let moiCacEmQuy = new MyPPTX.MoiCacEmQuy();
+  let navigationPage = new MyPPTX.NavigationPage();
+  let layChienThienChua = new MyPPTX.LayChienThienChua();
+  let thanhThanhThanh = new MyPPTX.ThanhThanhThanh();
+  let mauNhiemDucTin = new MyPPTX.MauNhiemDucTin();
+  let baiDocVaTinMung = new MyPPTX.BaiDocVaTinMung(
+    "Gc 2, 14-18",
+    "Mc 8, 27-35"
+  );
+  let myPowerpoint = new MyPPTX.PowerpointFile(
     [
-      "Thứ ba: Ai khóc lóc ấy là phúc thật, vì chưng sẽ được yên ủi vậy.",
-      "Thứ bốn: Ai khao khát nhân đức trọn lành ấy là phúc thật, vì chưng sẽ được no đủ vậy.",
+      transition,
+      moiCacEmQuy,
+      kinhDucChuaThanhThan,
+      kinhMuoiDieuRan,
+      kinhNamDieuRan,
+      kinhTamMoiPhucThat,
+      navigationPage,
+      baiDocVaTinMung,
+      transition,
+      nhapLe,
+      transition,
+      kinhThuongXot,
+      kinhVinhDanh,
+      transition,
+      dapCa,
+      transition,
+      alleluia,
+      tinMung,
+      transition,
+      dangLe,
+      transition,
+      thanhThanhThanh,
+      transition,
+      mauNhiemDucTin,
+      transition,
+      layChienThienChua,
+      transition,
+      kinhTruocRuocLe,
+      hiepLe,
+      transition,
+      chaMe,
+      kinhSauRuocLe,
+      transition,
+      ketLe,
+      transition,
+      eucharisticYouthSong,
     ],
-    [
-      "Thứ năm: Ai thương xót người ấy là phúc thật, vì chưng sẽ được thương xót vậy.",
-    ],
-    [
-      "Thứ sáu: Ai giữ lòng sạch sẽ ấy là phúc thật, vì chưng sẽ được thấy mặt Ðức Chúa Trời vậy.",
-    ],
-    [
-      "Thứ bảy: Ai làm cho người hòa thuận ấy là phúc thật, vì chưng sẽ được gọi là con Ðức Chúa Trời vậy.",
-    ],
-    [
-      "Thứ tám: Ai chịu khốn nạn vì Ðạo ngay ấy là phúc thật, vì chưng Nước Ðức Chúa Trời là của mình vậy.",
-    ],
-  ],
-  { tammoiphuc: true }
-);
-let moiCacEmQuy = new MoiCacEmQuy();
-let navigationPage = new NavigationPage();
-let layChienThienChua = new LayChienThienChua();
-let thanhThanhThanh = new ThanhThanhThanh();
-let mauNhiemDucTin = new MauNhiemDucTin();
-let baiDocVaTinMung = new BaiDocVaTinMung("Gc 2, 14-18", "Mc 8, 27-35");
-let myPowerpoint = new PowerpointFile(
-  [
-    transition,
-    moiCacEmQuy,
-    kinhDucChuaThanhThan,
-    kinhMuoiDieuRan,
-    kinhNamDieuRan,
-    kinhTamMoiPhucThat,
-    navigationPage,
-    baiDocVaTinMung,
-    transition,
-    nhapLe,
-    transition,
-    kinhThuongXot,
-    kinhVinhDanh,
-    transition,
-    dapCa,
-    transition,
-    alleluia,
-    tinMung,
-    transition,
-    dangLe,
-    transition,
-    thanhThanhThanh,
-    transition,
-    mauNhiemDucTin,
-    transition,
-    layChienThienChua,
-    transition,
-    kinhTruocRuocLe,
-    hiepLe,
-    transition,
-    chaMe,
-    kinhSauRuocLe,
-    transition,
-    ketLe,
-    transition,
-    eucharisticYouthSong,
-  ],
-  "Green"
-);
-myPowerpoint.write();
-myPowerpoint.saveFile(powerpointName);
-console.log("Done");
+    "Green"
+  );
+  myPowerpoint.write();
+  myPowerpoint.saveFile("DEMO");
+  console.log("Done");
+}
+main({ file: "nhapLe.txt" });
