@@ -1,13 +1,25 @@
-import * as MyPPTX from "./aggregator.js";
 import fs from "fs";
 import rl from "readline";
+import mongoose from "mongoose";
+import * as MyPPTX from "./backend/utils/class/aggregator.js";
+
+async function connectToDatabase() {
+  try {
+    await mongoose.connect("mongodb://localhost/testdb");
+    console.log("Connected to MongoDB");
+  } catch (error) {
+    console.error("Connection error:", error);
+  }
+}
 
 async function main(params) {
+  // connectToDatabase();
+
   const songVerses = await patchData(params.file);
-  console.log(songVerses);
+  // console.log(songVerses);
   const orderOfVerses = [0, 1, 0, 2, 0];
   const songVersesPatched = patchVerse(songVerses, orderOfVerses);
-  console.log(songVersesPatched);
+  // console.log(songVersesPatched);
   executePowerpoint(songVersesPatched);
 }
 
@@ -20,7 +32,7 @@ function patchVerse(songVerses, orderOfVerses) {
       }
     }
   }
-  console.log("patchedSongVerses: ", patchedSongVerses);
+  // console.log("patchedSongVerses: ", patchedSongVerses);
   return patchedSongVerses;
 }
 function patchData(file) {
@@ -49,7 +61,7 @@ function patchData(file) {
   });
 }
 function executePowerpoint(orderOfLyrics) {
-  console.log("orderOfLyrics: ", orderOfLyrics);
+  // console.log("orderOfLyrics: ", orderOfLyrics);
   // MAIN
   let nhapLe = new MyPPTX.Song(
     "GIAI KHÚC DÂNG TIẾN 4",
@@ -221,4 +233,7 @@ function executePowerpoint(orderOfLyrics) {
   myPowerpoint.saveFile("DEMO");
   console.log("Done");
 }
-main({ file: "nhapLe.txt" });
+// document.getElementById("generate").addEventListener("click", () => {
+//   main({ file: "./input_files/nhapLe.txt" });
+// });
+main({ file: "./input_files/nhapLe.txt" });

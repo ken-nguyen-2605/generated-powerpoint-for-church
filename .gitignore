@@ -1,7 +1,7 @@
 test.js
 Sample.js
 *.pptx
-
+.vscode/
 # Logs
 logs
 *.log

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Button</title>
+</head>
+<body>
+    <h1>Generated Powerpoint</h1>
+    <!-- action="http://localhost:5000/api/download" method="POST" -->
+    <form id="form">
+        <label for="theme">Choose an option:</label>
+        <select id="theme" name="theme">
+            <option value="green">Green</option>
+            <option value="red">Red</option>
+            <option value="purple">Purple</option>
+        </select>
+        <br/>
+        <label for="baidoc2">Bài Đọc 2</label>
+        <input type="text" id="baidoc2" name="baidoc2" required>
+        <br/>
+        <label for="tinmung">Tin Mừng</label>
+        <input type="text" id="tinmung" name="tinmung" required>
+        <br/>
+        <label for="nhaple">Nhập lễ</label>
+        <input type="text" id="nhaple" name="nhaple" required>
+        <br/>
+        <label for="dangle">Dâng lễ</label>
+        <input type="text" id="dangle" name="dangle" required>
+        <br/>
+        <label for="hieple">Hiệp lễ</label>
+        <input type="text" id="hieple" name="hieple" required>
+        <br/>
+        <label for="chame">Cha mẹ</label>
+        <input type="text" id="chame" name="chame" required>
+        <br/>
+        <label for="ketle">Kết lễ</label>
+        <input type="text" id="ketle" name="ketle" required>
+        <button type="submit" id="download">Download</button>
+    </form>
+    <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
+    <script src="index.js" type="module"></script>
+</body>
+</html>
