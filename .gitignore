@@ -1,7 +1,8 @@
 test.js
-Sample.js
 *.pptx
 .vscode/
+sample.js
+input_files/
 # Logs
 logs
 *.log

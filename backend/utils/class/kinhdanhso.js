@@ -2,7 +2,8 @@ import _ from "lodash";
 import { lyricsPropsWithFontSize } from "./base-const/another.js";
 
 // Với kinh đánh số, thứ nhất khác: "thứ nhất:" + "[space] + nội dung"
-export class KinhDanhSo {
+
+class KinhDanhSo {
   constructor(
     title,
     firstPage,
@@ -133,3 +134,90 @@ export class KinhDanhSo {
     }
   }
 }
+
+export const kinhTamMoiPhucThat = new KinhDanhSo(
+  "KINH\nTÁM MỐI PHÚC THẬT",
+  {
+    intro: "Phúc Thật Tám Mối:\n",
+    thuTu: "Thứ nhất:",
+    noiDung:
+      " Ai có lòng khó khăn ấy là phúc thật, vì chưng Nước Ðức Chúa Trời là của mình vậy.",
+  },
+  [
+    [
+      "Thứ hai: Ai hiền lành ấy là phúc thật, vì chưng sẽ được đất Ðức Chúa Trời làm của mình vậy.",
+    ],
+    [
+      "Thứ ba: Ai khóc lóc ấy là phúc thật, vì chưng sẽ được yên ủi vậy.",
+      "Thứ bốn: Ai khao khát nhân đức trọn lành ấy là phúc thật, vì chưng sẽ được no đủ vậy.",
+    ],
+    [
+      "Thứ năm: Ai thương xót người ấy là phúc thật, vì chưng sẽ được thương xót vậy.",
+    ],
+    [
+      "Thứ sáu: Ai giữ lòng sạch sẽ ấy là phúc thật, vì chưng sẽ được thấy mặt Ðức Chúa Trời vậy.",
+    ],
+    [
+      "Thứ bảy: Ai làm cho người hòa thuận ấy là phúc thật, vì chưng sẽ được gọi là con Ðức Chúa Trời vậy.",
+    ],
+    [
+      "Thứ tám: Ai chịu khốn nạn vì Ðạo ngay ấy là phúc thật, vì chưng Nước Ðức Chúa Trời là của mình vậy.",
+    ],
+  ],
+  { tammoiphuc: true }
+);
+
+export const kinhNamDieuRan = new KinhDanhSo(
+  "KINH NĂM ĐIỀU RĂN",
+  {
+    intro: "Hội Thánh có năm điều răn:\n",
+    thuTu: "Thứ nhất:",
+    noiDung:
+      " Tham dự Thánh Lễ và kiêng việc xác ngày Chúa Nhật cùng các ngày lễ buộc.",
+  },
+  [
+    [
+      "Thứ hai: Xưng tội trong một năm ít là một lần.",
+      "Thứ ba: Chịu Mình Thánh Đức Chúa Giêsu trong mùa Phục Sinh.",
+    ],
+    [
+      "Thứ bốn: Kiêng thịt và giữ chay những ngày Hội Thánh buộc.",
+      "Thứ năm: Đóng góp theo khả năng cho nhu cầu vật chất của Hội Thánh.",
+    ],
+  ]
+);
+
+export const kinhMuoiDieuRan = new KinhDanhSo(
+  "KINH MƯỜI ĐIỀU RĂN",
+  {
+    intro: "Đạo Đức Chúa Trời có Mười Điều răn:\n",
+    thuTu: "Thứ nhất:",
+    noiDung:
+      " Thờ phượng một Đức Chúa Trời và kính mến Người trên hết mọi sự.",
+  },
+  [
+    [
+      "Thứ hai: Chớ kêu tên Đức Chúa Trời vô cớ.",
+      "Thứ ba: Giữ ngày Chúa Nhật.",
+      "Thứ bốn: Thảo kính cha mẹ.",
+    ],
+    [
+      "Thứ năm: Chớ giết người.",
+      "Thứ sáu: Chớ làm sự dâm dục.",
+      "Thứ bảy: Chớ lấy của người.",
+    ],
+    [
+      "Thứ tám : Chớ làm chứng dối.",
+      "Thứ chín: Chớ muốn vợ chồng người.",
+      "Thứ mười: Chớ tham của người.",
+    ],
+  ],
+  {
+    lastPage: {
+      noiDung:
+        "Mười Điều răn ấy tóm về hai điều mà chớ: trước kính mến một Đức Chúa Trời trên hết mọi sự, sau là yêu người như mình ta vậy. ",
+      end: "Amen.",
+    },
+  }
+);
+

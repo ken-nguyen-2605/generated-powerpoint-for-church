@@ -39,10 +39,9 @@ export default class PowerpointFile {
     }
   }
 
-  saveFile() {
-    // this.powerpoint.writeFile({ fileName: powerpointName });
-    this.powerpoint.write("nodebuffer").then((buffer) => {
-      return buffer;
-    });
-  }
+  // saveFile() {
+  //   // this.powerpoint.writeFile({ fileName: powerpointName });
+  //   console.log("FAIL");
+  //   return this.powerpoint.write("nodebuffer");
+  // }
 }

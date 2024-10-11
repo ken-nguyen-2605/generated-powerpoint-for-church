@@ -1,3 +1,4 @@
+import { lyricsPropsWithFontSize } from "./another.js";
 export default class SecondPage {
   constructor(text, fontSize = 66, end = "") {
     this.text = text;

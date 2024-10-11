@@ -2,6 +2,7 @@ import { moiCacEmQuyProps } from "./base-const/props.js";
 export class MoiCacEmQuy {
   constructor() {}
   create(powerpoint, color) {
+    console.log(color);
     let newSlide = powerpoint.addSlide({ masterName: color });
     newSlide.addText("Mời\ncộng đoàn\nvà các em\nquỳ!!", {
       x: 1.66535433,

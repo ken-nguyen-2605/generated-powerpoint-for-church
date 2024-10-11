@@ -1,6 +1,11 @@
 import { layoutProps } from "./base-const/props.js";
+import path from "path";
+import { fileURLToPath } from 'url';
+// Convert module URL to file path
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const mauNhiemDucTinProps = {
-  path: "../resources/images/mauNhiemDucTin.png",
+  path: path.resolve(__dirname, "../resources/images/mauNhiemDucTin.png"),
   x: 4.0511811,
   y: 0,
   w: layoutProps.width - 2 * 4.08267717,

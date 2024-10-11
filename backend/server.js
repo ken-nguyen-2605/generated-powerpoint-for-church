@@ -7,6 +7,7 @@ import PptxGenJS from "pptxgenjs";
 import axios from "axios";
 import PowerpointFile from "./utils/class/powerpoint.js";
 import * as MyPPTX from "./utils/class/aggregator.js";
+import { defineVerseType } from "./utils/class/base-const/lyrics-manip.js";
 dotenv.config();
 
 const app = express();
@@ -40,34 +41,72 @@ app.post("/api/download", async (req, res) => {
     chame: data["chame"],
     ketle: data["ketle"],
   };
-  const arrayOfSongs = [];
+  const orderOfLyrics = [0, 1, 0, 2, 0];
+  let arrayOfSongs = [];
   for (const key in songsData) {
-    const song = await axios.get(
+    let song = await axios.get(
       `http://localhost:5000/api/songs?name=${songsData[key]}&part=${key}`
     );
     if (!song.data.data) {
-      return res.status(400).json({
-        message: "Song not found",
+      return res.status(400).json({ message: "Song not found" });
+    }
+    for (const verse of song.data.data.lyrics) {
+      arrayOfSongs.push({
+        type: defineVerseType(verse),
+        verse: new MyPPTX.Verse(verse),
       });
     }
-    for (const verse in song.data.data.lyrics) {
-      data[key] = 
-    }
+    const songVersesPatched = patchVerse(arrayOfSongs, orderOfLyrics);
+    // An array of type verse to pass right in to Song class
+    song = new MyPPTX.Song(songsData[key], key, songVersesPatched);
+    songsData[key] = song;
+    arrayOfSongs = [];
   }
-  let pptx = new PptxGenJS();
+  /*
+  songsData is an object with keys nhaple, dangle, hieple, chame, ketle
+  Each key has a value of Song object
+  */
   const listOfSlides = [
+    new MyPPTX.MoiCacEmQuy(),
+    new MyPPTX.KinhDucChuaThanhThan(),
+    MyPPTX.kinhTamMoiPhucThat,
+    MyPPTX.kinhMuoiDieuRan,
+    MyPPTX.kinhNamDieuRan,
     new MyPPTX.NavigationPage(),
-  
-  ]
-  pptx.write("nodebuffer").then((buffer) => {
-    // Headers help the browser understand how to process the response
+    new MyPPTX.BaiDocVaTinMung("Gc 2, 14-18", "Mc 8, 27-35"),
+    songsData.nhaple,
+    new MyPPTX.KinhThuongXot(),
+    new MyPPTX.KinhVinhDanh(),
+    new MyPPTX.DapCaVaAlleluia(
+      "ĐÁP CA",
+      "Tôi sẽ bước đi trước Thiên Nhan của Chúa."
+    ),
+    new MyPPTX.DapCaVaAlleluia(
+      "ALLELUIA - ALLELUIA",
+      "Chúa phán: “Thầy là đường, là sự thật và là sự sống. Không ai đến được với Cha mà lại không qua Thầy”."
+    ),
+    new MyPPTX.TinMung("Mc 8, 27-35"),
+    songsData.dangle,
+    new MyPPTX.ThanhThanhThanh(),
+    new MyPPTX.MauNhiemDucTin(),
+    new MyPPTX.KinhTruocRuocLe(),
+    songsData.hieple,
+    songsData.chame,
+    new MyPPTX.KinhSauRuocLe(),
+    songsData.ketle,
+    new MyPPTX.EucharisticYouthSong(),
+  ];
+  let powerpoint = new PowerpointFile(listOfSlides, "Red");
+  powerpoint.write();
+  // powerpoint.powerpoint.writeFile({ fileName: "Quyetdinh.pptx" });
+  powerpoint.powerpoint.write("nodebuffer").then((buffer) => {
+    console.log("Done");
     res.attachment("fileChieuMay.pptx");
-    // res.attachment is a helper function that sets the headers for you
-    // res.setHeader("Content-Disposition", "attachment; filename=example.pptx");
     res.setHeader(
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.presentationml.presentation"
     );
+    console.log("Done");
     res.send(buffer);
   });
 });
@@ -76,3 +115,15 @@ app.listen(PORT, () => {
   connectDB();
   console.log(`Server is running on port ${PORT}`);
 });
+
+function patchVerse(songVerses, orderOfVerses) {
+  let patchedSongVerses = [];
+  for (let i = 0; i < orderOfVerses.length; i++) {
+    for (let j = 0; j < songVerses.length; j++) {
+      if (songVerses[j].type === orderOfVerses[i]) {
+        patchedSongVerses.push(songVerses[j].verse);
+      }
+    }
+  }
+  return patchedSongVerses;
+}
