@@ -1,8 +1,19 @@
-import { titlePropsWithY, lyricsPropsWithFontSize } from "./base-const/another.js";
-import { calculateFontSize, extractLyrics, extractPreLyrics } from "./base-const/lyrics-manip.js";
-import { logoXuDoanProps, namMucVuProps, sectionOfTitleProps } from "./base-const/props.js";
+import {
+  titlePropsWithY,
+  lyricsPropsWithFontSize,
+} from "./base-const/another.js";
+import {
+  calculateFontSize,
+  extractLyrics,
+  extractPreLyrics,
+} from "./base-const/lyrics-manip.js";
+import {
+  logoXuDoanProps,
+  namMucVuProps,
+  sectionOfTitleProps,
+} from "./base-const/props.js";
 
-export default class Song {
+export class Song {
   // let verse1 = new Lyric("1. Một tấm bánh trắng chúng con hiệp dâng, nguyện nên sức thiêng dưỡng nuôi trần gian. Một ly rượu nho thắm hương thơm ngát, sự sống muôn đời chính Cha ban tặng.");
   // (title, songPart, [verse1, chorus, verse2, chorus])
   constructor(title, songPart, arrVerse = []) {

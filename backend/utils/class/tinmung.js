@@ -1,5 +1,5 @@
 import { tinMungProps } from "./base-const/props.js";
-export default class TinMung {
+export class TinMung {
   constructor(tinMung) {
     this.tinMung = tinMung;
   }

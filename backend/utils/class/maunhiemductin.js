@@ -31,7 +31,7 @@ const mauNhiemDucTinCongDoanProps = {
   lineSpacingMultiple: 1.02,
 };
 
-export default class MauNhiemDucTin {
+export class MauNhiemDucTin {
   constructor() {}
 
   create(powerpoint, color) {

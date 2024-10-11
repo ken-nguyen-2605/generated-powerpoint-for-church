@@ -1,5 +1,5 @@
 import { boxModel } from "./base-const/another.js"
-export default class NavigationPage {
+export class NavigationPage {
     constructor() {}
     create(powerpoint, color) {
       let newSlide = powerpoint.addSlide({ masterName: color });

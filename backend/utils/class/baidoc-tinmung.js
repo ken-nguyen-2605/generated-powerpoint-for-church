@@ -1,4 +1,4 @@
-export default class BaiDocVaTinMung {
+export class BaiDocVaTinMung {
   constructor(baidoc2, tinmung) {
     this.baidoc2 = baidoc2;
     this.tinmung = tinmung;

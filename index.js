@@ -35,31 +35,31 @@ function patchVerse(songVerses, orderOfVerses) {
   // console.log("patchedSongVerses: ", patchedSongVerses);
   return patchedSongVerses;
 }
-function patchData(file) {
-  return new Promise((resolve, reject) => {
-    let songVerses = [];
-    let myInterface = rl.createInterface({
-      input: fs.createReadStream(file),
-    });
+// function patchData(file) {
+//   return new Promise((resolve, reject) => {
+//     let songVerses = [];
+//     let myInterface = rl.createInterface({
+//       input: fs.createReadStream(file),
+//     });
 
-    // Process each line
-    myInterface.on("line", function (line) {
-      const verseType = MyPPTX.defineVerseType(line);
-      songVerses.push({
-        type: verseType,
-        verse: new MyPPTX.Verse(line),
-      });
-    });
+//     // Process each line
+//     myInterface.on("line", function (line) {
+//       const verseType = MyPPTX.defineVerseType(line);
+//       songVerses.push({
+//         type: verseType,
+//         verse: new MyPPTX.Verse(line),
+//       });
+//     });
 
-    // Resolve promise when the file reading is complete
-    myInterface.on("close", function () {
-      resolve(songVerses);
-    });
-    myInterface.on("error", function (err) {
-      reject(err);
-    });
-  });
-}
+//     // Resolve promise when the file reading is complete
+//     myInterface.on("close", function () {
+//       resolve(songVerses);
+//     });
+//     myInterface.on("error", function (err) {
+//       reject(err);
+//     });
+//   });
+// }
 function executePowerpoint(orderOfLyrics) {
   // console.log("orderOfLyrics: ", orderOfLyrics);
   // MAIN

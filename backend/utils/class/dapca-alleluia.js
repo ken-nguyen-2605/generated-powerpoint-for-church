@@ -1,7 +1,7 @@
 import { lyricsPropsWithFontSize } from "./base-const/another.js";
 import { calculateFontSize, calcFontDapCa } from "./base-const/lyrics-manip.js";
 import { characterPerSlideLimit } from "./base-const/another.js";
-export default class DapCaVaAlleluia {
+export class DapCaVaAlleluia {
     constructor(title, lyrics) {
       this.pages = [];
       this.distributeToPages(lyrics);

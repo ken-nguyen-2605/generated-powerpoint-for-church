@@ -6,7 +6,7 @@ import songRoutes from "./routes/song.route.js";
 import PptxGenJS from "pptxgenjs";
 import axios from "axios";
 import PowerpointFile from "./utils/class/powerpoint.js";
-import MyPPTX from "./utils/class/aggregator.js";
+import * as MyPPTX from "./utils/class/aggregator.js";
 dotenv.config();
 
 const app = express();
@@ -45,13 +45,19 @@ app.post("/api/download", async (req, res) => {
     const song = await axios.get(
       `http://localhost:5000/api/songs?name=${songsData[key]}&part=${key}`
     );
-    arrayOfSongs.push(song.data.data);
+    if (!song.data.data) {
+      return res.status(400).json({
+        message: "Song not found",
+      });
+    }
+    for (const verse in song.data.data.lyrics) {
+      data[key] = 
+    }
   }
-  console.log(arrayOfSongs);
   let pptx = new PptxGenJS();
   const listOfSlides = [
     new MyPPTX.NavigationPage(),
-    
+  
   ]
   pptx.write("nodebuffer").then((buffer) => {
     // Headers help the browser understand how to process the response

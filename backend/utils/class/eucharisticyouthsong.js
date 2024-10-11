@@ -1,6 +1,6 @@
 import { lyricsPropsWithFontSize, titlePropsWithY } from "./base-const/another.js";
 import { logoXuDoanProps, namMucVuProps, sectionOfTitleProps } from "./base-const/props.js";
-export default class EucharisticYouthSong {
+export class EucharisticYouthSong {
   constructor() {
     this.pages = [
       "Thiếu nhi Việt Nam đứng lên trong giai đoạn mới. Theo tiếng Giáo Hội và tiếng quê hương kêu mời.",

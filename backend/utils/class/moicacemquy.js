@@ -1,5 +1,5 @@
 import { moiCacEmQuyProps } from "./base-const/props.js";
-export default class MoiCacEmQuy {
+export class MoiCacEmQuy {
   constructor() {}
   create(powerpoint, color) {
     let newSlide = powerpoint.addSlide({ masterName: color });

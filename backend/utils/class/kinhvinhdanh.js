@@ -1,7 +1,7 @@
 import FirstPage from "./base-const/firstpage.js";
 import SecondPage from "./base-const/secondpage.js";
 import { lyricsPropsWithFontSize } from "./base-const/another.js";
-export default class KinhVinhDanh {
+export class KinhVinhDanh {
   constructor() {
     this.pages = [
       new FirstPage(
