@@ -1,8 +1,18 @@
-const form = document.getElementById("form");
+import axios from "https://cdn.skypack.dev/axios";
+
+/*
+Problems: 
+1. Press enter to change to the next input field, not to submit if the form is not filled
+2. If the form is empty, there might be problem in the backend when processing the data
+-> Fix by required attribute in the input field
+-> Add default keyword in the form
+ */
+const form = document.getElementById("my-form");
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   const formData = new FormData(form);
   const data = Object.fromEntries(formData);
+  console.log(data);
   downloadFile(data);
 });
 
@@ -21,7 +31,7 @@ const downloadFile = async (data) => {
     const a = document.createElement("a");
     a.style.display = "none";
     a.href = url;
-    a.download = "example.pptx"; // Change the file name as needed
+    a.download = "DEMO.pptx"; // Change the file name as needed
 
     // Append the anchor to the body
     document.body.appendChild(a);

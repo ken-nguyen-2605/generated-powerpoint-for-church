@@ -32,6 +32,38 @@ export function defineVerseType(verse) {
   }
 }
 
+export function patchVerse(songVerses, orderOfVerses) {
+  let patchedSongVerses = [];
+  for (let i = 0; i < orderOfVerses.length; i++) {
+    for (let j = 0; j < songVerses.length; j++) {
+      if (songVerses[j].type === orderOfVerses[i]) {
+        patchedSongVerses.push(songVerses[j].verse);
+      }
+    }
+  }
+  return patchedSongVerses;
+}
+
+export function definePartType(part) {
+  switch (part) {
+    case "nhaple":
+      return "Nhập Lễ";
+    case "dangle":
+      return "Dâng Lễ";
+    case "hieple":
+      return "Hiệp Lễ";
+    case "chame":
+      return "";
+    case "ketle":
+      return "Kết Lễ";
+    default: {
+      console.log("Error: Invalid part type");
+      console.log("Part: ", part);
+      return "";
+    }
+  }
+}
+
 export function extractPreLyrics(content) {
   let preLyrics = "";
   for (let i = 0; i < content.length; i++) {

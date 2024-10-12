@@ -3,42 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download Button</title>
+    <title>Generated Powerpoint</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Generated Powerpoint</h1>
-    <!-- action="http://localhost:5000/api/download" method="POST" -->
-    <form id="form">
-        <label for="theme">Choose an option:</label>
-        <select id="theme" name="theme">
-            <option value="green">Green</option>
-            <option value="red">Red</option>
-            <option value="purple">Purple</option>
-        </select>
-        <br/>
-        <label for="baidoc2">Bài Đọc 2</label>
-        <input type="text" id="baidoc2" name="baidoc2" required>
-        <br/>
-        <label for="tinmung">Tin Mừng</label>
-        <input type="text" id="tinmung" name="tinmung" required>
-        <br/>
-        <label for="nhaple">Nhập lễ</label>
-        <input type="text" id="nhaple" name="nhaple" required>
-        <br/>
-        <label for="dangle">Dâng lễ</label>
-        <input type="text" id="dangle" name="dangle" required>
-        <br/>
-        <label for="hieple">Hiệp lễ</label>
-        <input type="text" id="hieple" name="hieple" required>
-        <br/>
-        <label for="chame">Cha mẹ</label>
-        <input type="text" id="chame" name="chame" required>
-        <br/>
-        <label for="ketle">Kết lễ</label>
-        <input type="text" id="ketle" name="ketle" required>
-        <button type="submit" id="download">Download</button>
+
+<div class="form-container">
+    <form id="my-form">
+        <!-- Label -->
+        <div class="form-group">
+            <h1 class="title">Generated Powerpoint</h1>
+        </div>
+        
+        <!-- Field 1: Select Option -->
+        <div class="form-group">
+            <label for="theme">1. Theme:</label>
+            <select id="theme" name="theme" required>
+                <option value="">-- Chọn màu nền --</option>
+                <option value="Green">Xanh lá</option>
+                <option value="Red">Đỏ</option>
+                <option value="Purple">Tím</option>
+                <!-- Add more options as needed -->
+            </select>
+        </div>
+        
+        <!-- Fields 2-3: Single-line Text Inputs -->
+        <div class="form-group">
+            <label for="baidoc2">2. Bài đọc 2:</label>
+            <input type="text" id="baidoc2" name="baidoc2" placeholder="Type here..." required>
+        </div>
+        <div class="form-group">
+            <label for="tinmung">3. Tin Mừng:</label>
+            <input type="text" id="tinmung" name="tinmung" placeholder="Type here..." required>
+        </div>
+        
+        <!-- Fields 4-5: Paragraph Inputs -->
+        <div class="form-group">
+            <label for="dapca">4. Đáp ca:</label>
+            <textarea id="dapca" name="dapca" placeholder="Type your paragraph here..." required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="alleluia">5. Alleluia:</label>
+            <textarea id="alleluia" name="alleluia" placeholder="Type your paragraph here..." required></textarea>
+        </div>
+        
+        <!-- Fields 6-10: Search Bars with Autocomplete -->
+        <!-- Repeat this block for fields 6 to 10 with unique IDs -->
+        <div class="form-group autocomplete-suggestions">
+            <label for="nhaple">6. Nhập lễ:</label>
+            <input type="text" id="nhaple" name="nhaple" placeholder="Search..." autocomplete="off" required>
+            <div class="suggestions-list" id="nhaple-suggestion"></div>
+        </div>
+        <div class="form-group autocomplete-suggestions">
+            <label for="dangle">7. Dâng lễ:</label>
+            <input type="text" id="dangle" name="dangle" placeholder="Search..." autocomplete="off" required>
+            <div class="suggestions-list" id="dangle-suggestion"></div>
+        </div>
+        <div class="form-group autocomplete-suggestions">
+            <label for="hieple">8. Hiệp lễ:</label>
+            <input type="text" id="hieple" name="hieple" placeholder="Search..." autocomplete="off" required>
+            <div class="suggestions-list" id="hieple-suggestion"></div>
+        </div>
+        <div class="form-group autocomplete-suggestions">
+            <label for="chame">9. Cầu cho cha mẹ:</label>
+            <input type="text" id="chame" name="chame" placeholder="Search..." autocomplete="off" required>
+            <div class="suggestions-list" id="chame-suggestion"></div>
+        </div>
+        <div class="form-group autocomplete-suggestions">
+            <label for="ketle">10. Kết lễ:</label>
+            <input type="text" id="ketle" name="ketle" placeholder="Search..." autocomplete="off" required>
+            <div class="suggestions-list" id="ketle-suggestion"></div>
+        </div>
+        
+        <!-- Submit Button -->
+        <div class="form-group">
+            <button type="submit" class="submit-btn">Submit</button>
+        </div>
     </form>
-    <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
-    <script src="index.js" type="module"></script>
+</div>
+<script src="handle-suggestion.js" type="module"></script>
+<script src="index.js" type="module"></script>
 </body>
 </html>
