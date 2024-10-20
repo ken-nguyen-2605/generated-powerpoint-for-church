@@ -32,8 +32,6 @@ fetchAllSuggestions().then((res) => {
   });
 });
 
-console.log(suggestionsData);
-
 const fieldIds = ["nhaple", "dangle", "hieple", "chame", "ketle"];
 const suggestionsIds = fieldIds.map((id) => `${id}-suggestion`);
 // Function to handle autocomplete

@@ -5,7 +5,7 @@ const songSchema = mongoose.Schema(
 		name: {
 			type: String,
 			required: true,
-			unique: true,
+			unique: false,
 		},
 		part: {
 			type: String,
@@ -22,6 +22,6 @@ const songSchema = mongoose.Schema(
 	},
 	{ timestamps: true }
 );
-
+songSchema.set('autoIndex', true);
 const Song = mongoose.model("Song", songSchema);
 export default Song;

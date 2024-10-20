@@ -1,13 +1,12 @@
 import axios from "https://cdn.skypack.dev/axios";
 
-const fetchAllSongName = async () => {
-    try {
-        const response = await axios.get("http://localhost:5000/api/songs/all");
-        return response.data.data.map((song) => song.name);
-    } catch (error) {
-        console.log("There was a problem with the Axios operation:", error);
-    }
-}
+const fetchAllSong = async () => {
+	try {
+		return await axios.get("http://localhost:5000/api/songs/all");
+	} catch (error) {
+		console.log("There was a problem with the Axios operation:", error);
+	}
+};
 
 document
 	.getElementById("new-song-form")
@@ -28,22 +27,24 @@ document
 			lyrics: songLyrics,
 		};
 
-        const allSongNames = await fetchAllSongName();
-        if (allSongNames.includes(song.name)) {
-            alert("Song already exists");
-            return;
-        }
-
-		// TODO: Add your database submission logic here
+		const allSongs = await fetchAllSong();
+		const allSongNames = allSongs.data.data.map((song) => song.name);
+		const allSongParts = allSongs.data.data.map((song) => song.part);
+		if (allSongNames.includes(song.name)) {
+			if (allSongParts.includes(song.part)) {
+				alert("Song already exists");
+				return;
+			}
+		}
 
 		try {
-            await axios.post("http://localhost:5000/api/songs/new", song);
-            alert("Song created successfully");
-        } catch (error) {
-            console.log("There was a problem with the Axios operation:", error);
-            alert("Failed to create song");
-        }
+			await axios.post("http://localhost:5000/api/songs/new", song);
+			alert("Song created successfully");
+		} catch (error) {
+			console.log("There was a problem with the Axios operation:", error);
+			alert("Failed to create song");
+		}
 
-		// Optionally, reset the form after submission
+		// Reset the form after submission
 		this.reset();
 	});

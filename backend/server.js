@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import { connectDB } from "./config/db.js";
+import { dropNameIndex } from "./utils/dropIndex.js";
 import songRoutes from "./routes/song.route.js";
 import axios from "axios";
 import PowerpointFile from "./utils/class/powerpoint.js";
@@ -109,7 +110,6 @@ app.post("/api/download", async (req, res) => {
   powerpoint.write();
   // powerpoint.powerpoint.writeFile({ fileName: "Quyetdinh.pptx" });
   powerpoint.powerpoint.write("nodebuffer").then((buffer) => {
-    console.log("Done");
     res.attachment("fileChieuMay.pptx");
     res.setHeader(
       "Content-Type",
@@ -122,6 +122,7 @@ app.post("/api/download", async (req, res) => {
 
 app.listen(PORT, () => {
   connectDB();
+  // dropNameIndex();
   console.log(`Server is running on port ${PORT}`);
 });
 
