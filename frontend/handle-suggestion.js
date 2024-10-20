@@ -85,10 +85,3 @@ function setupAutocomplete(fieldId, suggestionsId) {
 for (let i = 0; i < 5; i++) {
   setupAutocomplete(fieldIds[i], suggestionsIds[i]);
 }
-
-// Handle form submission
-// document.getElementById("my-form").addEventListener("submit", (event) => {
-//   event.preventDefault();
-//   // You can handle form data here
-//   alert("Form submitted successfully!");
-// });

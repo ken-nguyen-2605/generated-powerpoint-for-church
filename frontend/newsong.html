@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Song</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="form-container">
+    <form id="new-song-form">
+        <!-- Title -->
+        <div class="form-group">
+            <h1 class="title">Add New Song</h1>
+        </div>
+        
+        <!-- Field 1: Song Name -->
+        <div class="form-group">
+            <label for="song-name">1. Song Name:</label>
+            <input type="text" id="song-name" name="songName" placeholder="Enter song name..." required>
+        </div>
+        
+        <!-- Field 2: Part -->
+        <div class="form-group">
+            <label for="song-part">2. Part:</label>
+            <!-- Changed from input type="text" to select -->
+            <select id="song-part" name="songPart" required>
+                <option value="" disabled selected>Select part</option>
+                <option value="nhaple">Nhập Lễ</option>
+                <option value="dangle">Dâng Lễ</option>
+                <option value="hieple">Hiệp Lễ</option>
+                <option value="chame">Cha Mẹ</option>
+                <option value="ketle">Kết Lễ</option>
+            </select>
+        </div>
+        
+        <!-- Field 3: Lyrics -->
+        <div class="form-group">
+            <label for="song-lyrics">3. Lyrics:</label>
+            <textarea id="song-lyrics" name="songLyrics" placeholder="Enter lyrics, one line per entry..." required></textarea>
+            <small>Enter each line of the lyrics on a new line.</small>
+        </div>
+        
+        <!-- Submit Button -->
+        <div class="form-group">
+            <button type="submit" class="submit-btn">Add Song</button>
+        </div>
+    </form>
+    <button onclick="window.location.href='index.html';" class="submit-btn">
+        Back to Home
+    </button>
+</div>
+<script src="newsong.js" type="module"></script>
+</body>
+</html>
