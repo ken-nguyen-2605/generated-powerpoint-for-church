@@ -28,13 +28,11 @@ document
 		};
 
 		const allSongs = await fetchAllSong();
-		const allSongNames = allSongs.data.data.map((song) => song.name);
-		const allSongParts = allSongs.data.data.map((song) => song.part);
-		if (allSongNames.includes(song.name)) {
-			if (allSongParts.includes(song.part)) {
-				alert("Song already exists");
-				return;
-			}
+		const allSongNamesAndParts = allSongs.data.data.map((song) => ([song.name, song.part]));
+		// Check if is there any song with the same name and part
+		if (allSongNamesAndParts.some(([name, part]) => name === song.name && part === song.part)) {
+			alert("Song already exists");
+			return;
 		}
 
 		try {
