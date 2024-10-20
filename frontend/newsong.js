@@ -5,7 +5,7 @@ const fetchAllSongName = async () => {
         const response = await axios.get("http://localhost:5000/api/songs/all");
         return response.data.data.map((song) => song.name);
     } catch (error) {
-        console.error("There was a problem with the Axios operation:", error);
+        console.log("There was a problem with the Axios operation:", error);
     }
 }
 
@@ -40,7 +40,7 @@ document
             await axios.post("http://localhost:5000/api/songs/new", song);
             alert("Song created successfully");
         } catch (error) {
-            console.error("There was a problem with the Axios operation:", error);
+            console.log("There was a problem with the Axios operation:", error);
             alert("Failed to create song");
         }
 
